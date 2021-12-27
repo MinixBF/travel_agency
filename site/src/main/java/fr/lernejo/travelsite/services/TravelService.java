@@ -1,24 +1,27 @@
 package fr.lernejo.travelsite.services;
 
-import fr.lernejo.travelsite.models.Travel;
-import fr.lernejo.travelsite.entities.TravelEntity;
-import fr.lernejo.travelsite.repositories.TravelRepository;
+import fr.lernejo.travelsite.models.Country;
+import fr.lernejo.travelsite.models.User;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TravelService {
-    private TravelRepository travelRepository;
+    private final List<Country> travels = new ArrayList<>();
+    private final List<User> users = new ArrayList<>();
 
-    public void save(TravelEntity travel) {
-        travelRepository.save(travel);
+    public TravelService() {
+        travels.add(new Country("France", 18.5));
+        travels.add(new Country("Italie", 20.5));
     }
 
-    public Travel[] getTravels(String userName) {
-        Travel[] travels = new Travel[2];
-        Travel test = new Travel("test1", 38.5);
-        travels[0] = test;
-        Travel test2 = new Travel("test1", 38.5);
-        travels[1] = test2;
+    public void inscription(User user) {
+        users.add(user);
+    }
+
+    public List<Country> getTravels(String userName) {
         return travels;
     }
 }
