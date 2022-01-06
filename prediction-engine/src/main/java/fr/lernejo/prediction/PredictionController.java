@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +16,6 @@ import java.util.List;
 public class PredictionController {
 
     private final TemperatureService temperatureService;
-    private final List<Temperature> temperatures = new ArrayList<>();
 
     public PredictionController(TemperatureService temperatureService) {
         this.temperatureService = temperatureService;
@@ -22,9 +23,10 @@ public class PredictionController {
 
     @GetMapping("/api/temperature")
     public Prediction getTemperature(@RequestParam String country) {
-        var temperature = this.temperatureService.getTemperature(country);
-        System.out.println(temperature);
-        var temperatures = this.temperatures;
+        List<Temperature> temperatures = new ArrayList<>();
+        LocalDate dateNow = LocalDate.now();
+        temperatures.add(new Temperature(dateNow.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ,this.temperatureService.getTemperature(country)));
+        temperatures.add(new Temperature(dateNow.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ,this.temperatureService.getTemperature(country)));
         return new Prediction(country,temperatures);
     }
 }

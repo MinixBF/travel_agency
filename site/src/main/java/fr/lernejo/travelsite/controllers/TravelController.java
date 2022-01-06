@@ -1,7 +1,7 @@
 package fr.lernejo.travelsite.controllers;
 
 import fr.lernejo.travelsite.models.Country;
-import fr.lernejo.travelsite.services.TravelService;
+import fr.lernejo.travelsite.services.SiteService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,15 +11,15 @@ import java.util.List;
 @RestController
 public class TravelController {
 
-    private final TravelService travelService;
+    private final SiteService siteService;
 
-    public TravelController(TravelService travelService) {
-        this.travelService = travelService;
+    public TravelController(SiteService siteService) {
+        this.siteService = siteService;
     }
 
     @ResponseBody
     @GetMapping
     public List<Country> travels(@RequestParam String userName ) {
-        return travelService.getTravels(userName);
+        return siteService.getTravels(userName);
     }
 }

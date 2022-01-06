@@ -1,7 +1,7 @@
 package fr.lernejo.travelsite.controllers;
 
 import fr.lernejo.travelsite.models.User;
-import fr.lernejo.travelsite.services.TravelService;
+import fr.lernejo.travelsite.services.SiteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/inscription")
 @RestController
 public class InscriptionController {
-    private final TravelService travelService;
+    private final SiteService siteService;
 
     @Autowired
-    public InscriptionController(TravelService travelService) {
-        this.travelService = travelService;
+    public InscriptionController(SiteService siteService) {
+        this.siteService = siteService;
     }
 
     @PostMapping
     public void inscription(@RequestBody User inscription) {
-        this.travelService.inscription(inscription);
+        this.siteService.inscription(inscription);
     }
 }
