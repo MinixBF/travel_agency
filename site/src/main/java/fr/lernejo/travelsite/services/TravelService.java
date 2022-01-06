@@ -24,4 +24,5 @@ public class TravelService {
     public List<Country> getTravels(String userName) {
         return travels;
     }
+
 }
