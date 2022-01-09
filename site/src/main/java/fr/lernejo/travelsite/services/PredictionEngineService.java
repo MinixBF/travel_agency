@@ -1,24 +1,22 @@
 package fr.lernejo.travelsite.services;
 
+import fr.lernejo.prediction.models.Prediction;
 import fr.lernejo.travelsite.models.PredictionEngineClient;
-import fr.lernejo.travelsite.models.Country;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
 
 import java.io.IOException;
 
 @Service
-public class PredictionEngineService {
+public record PredictionEngineService(PredictionEngineClient predictionEngineClient) {
 
-    private final PredictionEngineClient predictionEngineClient;
-
-    public PredictionEngineService(PredictionEngineClient predictionEngineClient) {
-        this.predictionEngineClient = predictionEngineClient;
+    public Prediction getTemperature(String Country) {
+        Call<Prediction> call = predictionEngineClient.getTemperature(Country);
+        try {
+            return call.execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
-
-    public Country getTemperature(String Country) throws IOException {
-        Call<Country> call = predictionEngineClient.getTemperature(Country);
-        return call.execute().body();
-    }
-
 }

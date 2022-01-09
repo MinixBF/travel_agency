@@ -1,5 +1,6 @@
 package fr.lernejo.travelsite.models;
 
+import fr.lernejo.prediction.models.Prediction;
 import fr.lernejo.travelsite.models.Country;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -9,10 +10,10 @@ import java.util.List;
 
 public interface PredictionEngineClient {
 
-    @GET("/api/predict")
-    Call<List<String>> getPredictions();
+    @GET("/api/ping")
+    Call<String> ping();
 
     @GET("/api/temperature")
-    Call<Country> getTemperature(@Query("country") String country);
+    Call<Prediction> getTemperature(@Query("country") String country);
 }
 
