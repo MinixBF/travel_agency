@@ -1,10 +1,8 @@
 package fr.lernejo.travelsite.services;
 
-import fr.lernejo.travelsite.models.Country;
-import fr.lernejo.travelsite.models.Temperature;
-import fr.lernejo.travelsite.models.User;
-import fr.lernejo.travelsite.models.WeatherExpectation;
+import fr.lernejo.travelsite.models.*;
 import org.springframework.stereotype.Service;
+import retrofit2.Call;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,10 +16,10 @@ import java.util.stream.Stream;
 public class SiteService {
     private final List<User> users = new ArrayList<>();
 
-    private final PredictionEngineService predictionEngineService;
+    PredictionEngineClient predictionEngineClient;
 
-    public SiteService(PredictionEngineService predictionEngineService) {
-        this.predictionEngineService = predictionEngineService;
+    public SiteService(PredictionEngineClient predictionEngineClient) {
+        this.predictionEngineClient = predictionEngineClient;
     }
 
     // INSCRIPTION :
@@ -38,7 +36,7 @@ public class SiteService {
         User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElseThrow();
         double userPrediction = getTemperatureMoy(userFind.userCountry());
         getCountries().forEach(country -> {
-                double temperature = Objects.requireNonNull(predictionEngineService.getTemperature(country)).temperatures().stream().findFirst().orElseThrow().temperature();
+                double temperature = Objects.requireNonNull(getTemperature(country)).temperatures().stream().findFirst().orElseThrow().temperature();
                 if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
                         || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance())  {
                     travels.add(new Country(country, temperature));
@@ -49,7 +47,7 @@ public class SiteService {
 
     //GetTemperatureMoy from country
     private double getTemperatureMoy(String country) {
-        return Objects.requireNonNull(predictionEngineService.getTemperature(country)).temperatures().stream().mapToDouble(Temperature::temperature).average().orElse(0);
+        return Objects.requireNonNull(getTemperature(country)).temperatures().stream().mapToDouble(Temperature::temperature).average().orElse(0);
     }
 
     // Country :
@@ -64,6 +62,19 @@ public class SiteService {
         }
         assert content != null;
         return content.lines();
+    }
+
+    private Prediction getTemperature(String country) {
+        Call<Prediction> call = predictionEngineClient.getTemperature(country);
+        try {
+            Prediction body = call.execute().body();
+            call.cancel();
+            return body;
+        } catch (IOException e) {
+            e.printStackTrace();
+            call.cancel();
+            return null;
+        }
     }
 
 }
