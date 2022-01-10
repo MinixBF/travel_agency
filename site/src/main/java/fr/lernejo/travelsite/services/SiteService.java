@@ -34,7 +34,7 @@ public class SiteService {
     public List<Country> getTravels(String userName) {
         List<Country> travels = new ArrayList<>();
         User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElseThrow();
-        double userPrediction = 30;
+        double userPrediction = getTemperatureMoy(userFind.userCountry());
         getCountries().forEach(country -> {
             double temperature = 22.5;
             if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
