@@ -37,7 +37,7 @@ public class SiteService {
         List<Country> travels = new ArrayList<>();
         User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElseThrow();
         double userPrediction = getTemperatureMoy(userFind.userCountry());
-        if(userPrediction != 0) {
+        if(userPrediction != -1) {
             countries.forEach(country -> {
                 double temperature = getTemperatureMoy(country);
                 if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
@@ -51,7 +51,8 @@ public class SiteService {
 
     //GetTemperatureMoy from country
     private double getTemperatureMoy(String country) {
-        return Objects.requireNonNull(getTemperature(country)).stream().mapToDouble(Prediction::getTemperature).average().orElse(0);
+        Prediction temp = getTemperature(country);
+        return temp != null ? temp.getTemperature() : -1;
     }
 
     // Country :
@@ -68,12 +69,12 @@ public class SiteService {
         return content.lines();
     }
 
-    private List<Prediction> getTemperature(String country) {
-        List<Prediction> predictions = new ArrayList<>();
+    private Prediction getTemperature(String country) {
+        Prediction predictions = null;
         Call<Prediction> call = predictionEngineClient.getTemperature(country);
         try {
             if (call.execute().isSuccessful() && call.execute().body() != null && call.execute().code() == 200) {
-                predictions.add(call.execute().body());
+                predictions = (call.execute().body());
             }
         } catch (IOException e) {
             e.printStackTrace();

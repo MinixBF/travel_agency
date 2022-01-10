@@ -17,7 +17,7 @@ public class Launcher {
         Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("http://localhost:7080/")
             .addConverterFactory(JacksonConverterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
+            //.addConverterFactory(GsonConverterFactory.create())
             .build();
 
         return retrofit.create(PredictionEngineClient.class);
