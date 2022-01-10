@@ -37,13 +37,15 @@ public class SiteService {
         List<Country> travels = new ArrayList<>();
         User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElseThrow();
         double userPrediction = getTemperatureMoy(userFind.userCountry());
-        countries.forEach(country -> {
-            double temperature = getTemperatureMoy(country);
-            if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
-                || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance())  {
-                travels.add(new Country(country, temperature));
-            }
-        });
+        if(userPrediction != 0) {
+            countries.forEach(country -> {
+                double temperature = getTemperatureMoy(country);
+                if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
+                    || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance()) {
+                    travels.add(new Country(country, temperature));
+                }
+            });
+        }
         return travels;
     }
 
