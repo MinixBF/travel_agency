@@ -18,7 +18,7 @@ public class TravelController {
 
     @ResponseBody
     @GetMapping
-    public List<Country> travels(@RequestParam String userName ) {
+    public Object travels(@RequestParam String userName ) {
         return siteService.getTravels(userName);
     }
 }

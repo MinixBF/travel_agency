@@ -1,6 +1,7 @@
 package fr.lernejo.travelsite.services;
 
 import fr.lernejo.travelsite.models.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
 
@@ -9,7 +10,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 @Service
@@ -33,11 +33,14 @@ public class SiteService {
 
     // TRAVELS :
     // Return Country and Temperature
-    public List<Country> getTravels(String userName) {
+    public Object getTravels(String userName) {
         List<Country> travels = new ArrayList<>();
-        User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElseThrow();
+        User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElse(null);
+        if (userFind == null) {
+            return ResponseEntity.status(417).body("Unknown username (CODE 417)");
+        }
         double userPrediction = getTemperatureMoy(userFind.userCountry());
-        if(userPrediction != -1) {
+        if (userPrediction != -1) {
             countries.forEach(country -> {
                 double temperature = getTemperatureMoy(country);
                 if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
