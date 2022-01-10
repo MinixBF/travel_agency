@@ -17,11 +17,12 @@ public class SiteService {
     private final List<User> users = new ArrayList<>();
 
     final PredictionEngineClient predictionEngineClient;
-    private final Stream<String> countries;
+    private final List<String> countries;
 
     public SiteService(PredictionEngineClient predictionEngineClient) {
         this.predictionEngineClient = predictionEngineClient;
         this.countries = getCountries();
+
     }
 
     // INSCRIPTION :
@@ -42,10 +43,12 @@ public class SiteService {
         double userPrediction = getTemperatureMoy(userFind.userCountry());
         if (userPrediction != -1) {
             countries.forEach(country -> {
-                double temperature = getTemperatureMoy(country);
-                if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
-                    || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance()) {
-                    travels.add(new Country(country, temperature));
+                if(country != null) {
+                    double temperature = getTemperatureMoy(country);
+                    if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
+                        || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance()) {
+                        travels.add(new Country(country, temperature));
+                    }
                 }
             });
         }
@@ -59,17 +62,19 @@ public class SiteService {
     }
 
     // Country :
-    public Stream<String> getCountries() {
+    public List<String> getCountries() {
+        List<String> countries = new ArrayList<>();
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("countries.txt");
-        assert inputStream != null;
-        String content = null;
-        try {
-            content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(inputStream != null) {
+            try {
+                String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                countries.add(content);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return countries;
         }
-        assert content != null;
-        return content.lines();
+        return countries;
     }
 
     private Prediction getTemperature(String country) {
