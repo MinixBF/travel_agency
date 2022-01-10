@@ -39,10 +39,8 @@ public class SiteService {
         double userPrediction = getTemperatureMoy(userFind.userCountry());
         getCountries().forEach(country -> {
                 double temperature = Objects.requireNonNull(predictionEngineService.getTemperature(country)).temperatures().stream().findFirst().orElseThrow().temperature();
-
-                if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()) {
-                    travels.add(new Country(country, temperature));
-                }else if (userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance()) {
+                if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
+                        || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance())  {
                     travels.add(new Country(country, temperature));
                 }
         });
