@@ -51,7 +51,7 @@ public class SiteService {
 
     //GetTemperatureMoy from country
     private double getTemperatureMoy(String country) {
-        return Objects.requireNonNull(getTemperature(country)).temperatures().stream().mapToDouble(Temperature::temperature).average().orElse(0);
+        return Objects.requireNonNull(getTemperature(country)).stream().mapToDouble(Prediction::getTemperature).average().orElse(0);
     }
 
     // Country :
@@ -68,17 +68,18 @@ public class SiteService {
         return content.lines();
     }
 
-    private Prediction getTemperature(String country) {
+    private List<Prediction> getTemperature(String country) {
+        List<Prediction> predictions = new ArrayList<>();
         Call<Prediction> call = predictionEngineClient.getTemperature(country);
         try {
-            Prediction body = call.execute().body();
-            call.cancel();
-            return body;
+            if (call.execute().isSuccessful() && call.execute().body() != null && call.execute().code() == 200) {
+                predictions.add(call.execute().body());
+            }
         } catch (IOException e) {
             e.printStackTrace();
             call.cancel();
-            return null;
         }
+        return predictions;
     }
 
 }
