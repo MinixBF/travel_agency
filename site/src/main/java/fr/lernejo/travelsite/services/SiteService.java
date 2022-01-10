@@ -38,19 +38,23 @@ public class SiteService {
         List<Country> travels = new ArrayList<>();
         User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElseThrow();
         double userPrediction = getTemperatureMoy(userFind.userCountry());
-        getCountries().forEach(country -> {
-            double temperature = Objects.requireNonNull(predictionEngineService.getTemperature(country)).temperatures().stream().findFirst().orElseThrow().temperature();
-            if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()) {
-                travels.add(new Country(country, temperature));
-            }else if (userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance()) {
-                travels.add(new Country(country, temperature));
-            }
-        });
+        Stream<String> countries = getCountries();
+        if(countries != null) {
+            countries.forEach(country -> {
+                double temperature = Objects.requireNonNull(predictionEngineService.getTemperature(country)).temperatures().stream().findFirst().orElseThrow().temperature();
+
+                if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()) {
+                    travels.add(new Country(country, temperature));
+                }else if (userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance()) {
+                    travels.add(new Country(country, temperature));
+                }
+            });
+        }
         return travels;
     }
 
     //GetTemperatureMoy from country
-    public double getTemperatureMoy(String country) {
+    private double getTemperatureMoy(String country) {
         return Objects.requireNonNull(predictionEngineService.getTemperature(country)).temperatures().stream().mapToDouble(Temperature::temperature).average().orElse(0);
     }
 

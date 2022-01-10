@@ -10,13 +10,12 @@ import java.io.IOException;
 @Service
 public record PredictionEngineService(PredictionEngineClient predictionEngineClient) {
 
-    public Prediction getTemperature(String Country) {
-        Call<Prediction> call = predictionEngineClient.getTemperature(Country);
+    public Prediction getTemperature(String country) {
         try {
-            return call.execute().body();
+            return predictionEngineClient.getTemperature(country).execute().body();
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 }

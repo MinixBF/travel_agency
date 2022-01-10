@@ -4,10 +4,8 @@ import fr.lernejo.travelsite.models.Country;
 import fr.lernejo.travelsite.services.SiteService;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin("*")
 @RequestMapping(value = "/api/travels")
 @RestController
 public class TravelController {

@@ -10,9 +10,6 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 @SpringBootApplication
 public class Launcher {
-    public static void main(String[] args) {
-        SpringApplication.run(Launcher.class, args);
-    }
 
     @Bean
     PredictionEngineClient predictionEngineClient() {
@@ -21,7 +18,12 @@ public class Launcher {
             .addConverterFactory(JacksonConverterFactory.create())
             .build();
 
+
         return retrofit.create(PredictionEngineClient.class);
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Launcher.class, args);
     }
 }
 
