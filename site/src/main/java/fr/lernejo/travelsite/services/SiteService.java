@@ -17,9 +17,11 @@ public class SiteService {
     private final List<User> users = new ArrayList<>();
 
     final PredictionEngineClient predictionEngineClient;
+    private final Stream<String> countries;
 
     public SiteService(PredictionEngineClient predictionEngineClient) {
         this.predictionEngineClient = predictionEngineClient;
+        this.countries = getCountries();
     }
 
     // INSCRIPTION :
@@ -35,7 +37,7 @@ public class SiteService {
         List<Country> travels = new ArrayList<>();
         User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElseThrow();
         double userPrediction = getTemperatureMoy(userFind.userCountry());
-        getCountries().forEach(country -> {
+        countries.forEach(country -> {
             double temperature = getTemperatureMoy(country);
             if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
                 || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance())  {
