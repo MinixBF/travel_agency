@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 public class SiteService {
     private final List<User> users = new ArrayList<>();
 
-    PredictionEngineClient predictionEngineClient;
+    final PredictionEngineClient predictionEngineClient;
 
     public SiteService(PredictionEngineClient predictionEngineClient) {
         this.predictionEngineClient = predictionEngineClient;
@@ -34,13 +34,13 @@ public class SiteService {
     public List<Country> getTravels(String userName) {
         List<Country> travels = new ArrayList<>();
         User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElseThrow();
-        double userPrediction = getTemperatureMoy(userFind.userCountry());
+        double userPrediction = 30;
         getCountries().forEach(country -> {
-                double temperature = Objects.requireNonNull(getTemperature(country)).temperatures().stream().findFirst().orElseThrow().temperature();
-                if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
-                        || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance())  {
-                    travels.add(new Country(country, temperature));
-                }
+            double temperature = 22.5;
+            if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
+                || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance())  {
+                travels.add(new Country(country, temperature));
+            }
         });
         return travels;
     }
