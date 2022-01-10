@@ -2,6 +2,7 @@ package fr.lernejo.prediction;
 
 import fr.lernejo.travelsite.models.Prediction;
 import fr.lernejo.travelsite.models.Temperature;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,11 +22,16 @@ public class PredictionController {
     }
 
     @GetMapping("/api/temperature")
-    public Prediction getTemperature(@RequestParam String country) {
+    public Object getTemperature(@RequestParam String country) {
         List<Temperature> temperatures = new ArrayList<>();
         LocalDate dateNow = LocalDate.now();
         temperatures.add(new Temperature(dateNow.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ,this.temperatureService.getTemperature(country)));
         temperatures.add(new Temperature(dateNow.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ,this.temperatureService.getTemperature(country)));
-        return new Prediction(country,temperatures);
+        try {
+            return new Prediction(country,temperatures);
+        }
+        catch (UnknownCountryException e){
+            return ResponseEntity.status(417).body("Unknown country (CODE 417)");
+        }
     }
 }
