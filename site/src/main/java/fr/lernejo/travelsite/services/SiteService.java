@@ -1,8 +1,7 @@
 package fr.lernejo.travelsite.services;
 
-import fr.lernejo.prediction.models.Prediction;
-import fr.lernejo.prediction.models.Temperature;
 import fr.lernejo.travelsite.models.Country;
+import fr.lernejo.travelsite.models.Temperature;
 import fr.lernejo.travelsite.models.User;
 import fr.lernejo.travelsite.models.WeatherExpectation;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,5 @@
 package fr.lernejo.travelsite.models;
 
-import fr.lernejo.prediction.models.Prediction;
-import fr.lernejo.travelsite.models.Country;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

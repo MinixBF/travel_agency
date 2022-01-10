@@ -1,8 +1,7 @@
 package fr.lernejo.prediction;
 
-import fr.lernejo.prediction.models.Prediction;
-import fr.lernejo.prediction.models.Temperature;
-import org.springframework.beans.factory.annotation.Autowired;
+import fr.lernejo.travelsite.models.Prediction;
+import fr.lernejo.travelsite.models.Temperature;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,8 +1,12 @@
 package fr.lernejo.travelsite.controllers;
 
+
 import fr.lernejo.travelsite.models.User;
 import fr.lernejo.travelsite.services.SiteService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping(value = "/api/inscription")
 @RestController

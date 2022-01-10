@@ -1,6 +1,6 @@
 package fr.lernejo.travelsite.services;
 
-import fr.lernejo.prediction.models.Prediction;
+import fr.lernejo.travelsite.models.Prediction;
 import fr.lernejo.travelsite.models.PredictionEngineClient;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;

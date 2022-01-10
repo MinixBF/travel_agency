@@ -1,4 +1,4 @@
-package fr.lernejo.prediction.models;
+package fr.lernejo.travelsite.models;
 
 import java.util.List;
 
