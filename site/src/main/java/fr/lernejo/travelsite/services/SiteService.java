@@ -37,17 +37,13 @@ public class SiteService {
     // Return Country and Temperature
     public Object getTravels(String userName) {
         List<Country> travels = new ArrayList<>();
-        User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElse(null);
-        if (userFind == null) {
-            return ResponseEntity.status(417).body("Unknown username (CODE 417)");
-        }
+        User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElseThrow();
         double userPrediction = getTemperatureMoy(userFind.userCountry());
         if (userPrediction != -1) {
             countries.forEach(country -> {
-                if(country != null && country.length() > 0 && !country.equals(userFind.userCountry())) {
+                if (country != null && country.length() > 0 && !country.equals(userFind.userCountry())) {
                     double temperature = getTemperatureMoy(country);
-                    if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature  - userFind.minimumTemperatureDistance() ) < userPrediction
-                        || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature +  userFind.minimumTemperatureDistance()) > userPrediction) {
+                    if (temperature != -1 && userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userFind.minimumTemperatureDistance()) < userPrediction|| userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userFind.minimumTemperatureDistance()) > userPrediction) {
                         travels.add(new Country(country, temperature));
                     }
                 }
