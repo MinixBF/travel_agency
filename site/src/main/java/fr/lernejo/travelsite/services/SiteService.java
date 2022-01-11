@@ -1,34 +1,33 @@
 package fr.lernejo.travelsite.services;
 
 import fr.lernejo.travelsite.models.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 @Service
 public class SiteService {
     private final List<User> users = new ArrayList<>();
 
     final PredictionEngineClient predictionEngineClient;
-    private final List<String> countries;
+    private final ArrayList<String> countries = new ArrayList<>();
+
 
     public SiteService(PredictionEngineClient predictionEngineClient) {
         this.predictionEngineClient = predictionEngineClient;
-        this.countries = getCountries();
-
+        try {
+            this.countries.addAll(new String(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("countries.txt")).readAllBytes(), StandardCharsets.UTF_8).lines().toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // INSCRIPTION :
-    // Return N/A
-    // User Properties : String userEmail, String userName, String userCountry, String weatherExpectation , double minimumTemperatureDistance
     public void inscription(User user) {
         users.add(user);
     }
@@ -56,19 +55,6 @@ public class SiteService {
     private double getTemperatureMoy(String country) {
         Prediction temp = getTemperature(country);
         return temp != null ? temp.getTemperature() : -1;
-    }
-
-    // Country :
-    public List<String> getCountries() {
-        List<String> countries;
-        String fileContent = null;
-        try {
-            fileContent = new String(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("countries.txt")).readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) { e.printStackTrace(); }
-        assert fileContent != null;
-        countries = fileContent.lines()
-            .filter(Objects::nonNull).toList();
-        return countries;
     }
 
     private Prediction getTemperature(String country) {
