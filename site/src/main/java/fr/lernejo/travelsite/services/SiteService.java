@@ -38,37 +38,30 @@ public class SiteService {
         List<Country> travels = new ArrayList<>();
         User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElseThrow();
         double userPrediction = getTemperatureMoy(userFind.userCountry());
-        if (userPrediction != -1) {
-            countries.forEach(country -> {
-                if (country != null && country.length() > 0 && !country.equals(userFind.userCountry())) {
-                    double temperature = getTemperatureMoy(country);
-                    if (temperature != -1 && userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userFind.minimumTemperatureDistance()) < userPrediction|| userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userFind.minimumTemperatureDistance()) > userPrediction) {
-                        travels.add(new Country(country, temperature));
-                    }
+        countries.forEach(country -> {
+            if (country != null && country.length() > 0 && !country.equals(userFind.userCountry())) {
+                double temperature = getTemperatureMoy(country);
+                if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userFind.minimumTemperatureDistance()) < userPrediction|| userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userFind.minimumTemperatureDistance()) > userPrediction) {
+                    travels.add(new Country(country, temperature));
                 }
-            });
-        }
+            }
+        });
         return travels;
     }
 
     //GetTemperatureMoy from country
     private double getTemperatureMoy(String country) {
-        Prediction temp = getTemperature(country);
-        return temp != null ? temp.getTemperature() : -1;
+        return Objects.requireNonNull(getTemperature(country)).getTemperature();
     }
 
     private Prediction getTemperature(String country) {
-        Prediction predictions = null;
-        Call<Prediction> call = predictionEngineClient.getTemperature(country);
         try {
-            if (call.execute().isSuccessful() && call.execute().body() != null && call.execute().code() == 200) {
-                predictions = (call.execute().body());
-            }
+            return predictionEngineClient.getTemperature(country).execute().body();
         } catch (IOException e) {
+            System.err.println("Error while calling the API : Could not get the temperature for " + country);
             e.printStackTrace();
-            call.cancel();
         }
-        return predictions;
+        return null;
     }
 
 }
