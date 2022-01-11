@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Service
@@ -43,10 +44,10 @@ public class SiteService {
         double userPrediction = getTemperatureMoy(userFind.userCountry());
         if (userPrediction != -1) {
             countries.forEach(country -> {
-                if(country != null) {
+                if(country != null && country.length() > 0 && !country.equals(userFind.userCountry())) {
                     double temperature = getTemperatureMoy(country);
-                    if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userPrediction) < userFind.minimumTemperatureDistance()
-                        || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userPrediction) > userFind.minimumTemperatureDistance()) {
+                    if (userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature  - userFind.minimumTemperatureDistance() ) < userPrediction
+                        || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature +  userFind.minimumTemperatureDistance()) > userPrediction) {
                         travels.add(new Country(country, temperature));
                     }
                 }
@@ -63,17 +64,14 @@ public class SiteService {
 
     // Country :
     public List<String> getCountries() {
-        List<String> countries = new ArrayList<>();
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("countries.txt");
-        if(inputStream != null) {
-            try {
-                String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-                countries.add(content);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return countries;
-        }
+        List<String> countries;
+        String fileContent = null;
+        try {
+            fileContent = new String(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("countries.txt")).readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) { e.printStackTrace(); }
+        assert fileContent != null;
+        countries = fileContent.lines()
+            .filter(Objects::nonNull).toList();
         return countries;
     }
 
