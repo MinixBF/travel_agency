@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 public class PredictionController {
 
+
     private final TemperatureService temperatureService;
 
     public PredictionController(TemperatureService temperatureService) {
@@ -20,16 +21,11 @@ public class PredictionController {
     }
 
     @GetMapping("/api/temperature")
-    public Object getTemperature(@RequestParam String country) {
+    public Prediction getTemperature(@RequestParam String country) {
         List<Temperature> temperatures = new ArrayList<>();
         LocalDate dateNow = LocalDate.now();
         temperatures.add(new Temperature(dateNow.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ,this.temperatureService.getTemperature(country)));
         temperatures.add(new Temperature(dateNow.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ,this.temperatureService.getTemperature(country)));
-        try {
-            return new Prediction(country,temperatures);
-        }
-        catch (UnknownCountryException e){
-            return ResponseEntity.status(417).body("Unknown country (CODE 417)");
-        }
+        return new Prediction(country,temperatures);
     }
 }
