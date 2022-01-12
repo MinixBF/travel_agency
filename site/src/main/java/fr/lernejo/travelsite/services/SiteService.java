@@ -2,7 +2,6 @@ package fr.lernejo.travelsite.services;
 
 import fr.lernejo.travelsite.models.*;
 import org.springframework.stereotype.Service;
-import retrofit2.Call;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -36,16 +35,18 @@ public class SiteService {
     // Return Country and Temperature
     public Object getTravels(String userName) {
         List<Country> travels = new ArrayList<>();
-        User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElseThrow();
-        double userPrediction = getTemperatureMoy(userFind.userCountry());
-        countries.forEach(country -> {
-            if (country != null && country.length() > 0 && !country.equals(userFind.userCountry()) && userPrediction != 999) {
-                double temperature = getTemperatureMoy(country);
-                if (temperature != 999 && userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userFind.minimumTemperatureDistance()) <= userPrediction|| userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userFind.minimumTemperatureDistance()) >= userPrediction) {
-                    travels.add(new Country(country, temperature));
+        User userFind = users.stream().filter(user -> user.userName().equals(userName)).findFirst().orElse(null);
+        if(userFind != null) {
+            double userPrediction = getTemperatureMoy(userFind.userCountry());
+            countries.forEach(country -> {
+                if (country != null && country.length() > 0 && !country.equals(userFind.userCountry()) && userPrediction != 999) {
+                    double temperature = getTemperatureMoy(country);
+                    if (temperature != 999 && userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(temperature - userFind.minimumTemperatureDistance()) <= userPrediction || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(temperature + userFind.minimumTemperatureDistance()) >= userPrediction) {
+                        travels.add(new Country(country, temperature));
+                    }
                 }
-            }
-        });
+            });
+        }
         return travels;
     }
 
