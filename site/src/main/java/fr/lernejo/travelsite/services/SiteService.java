@@ -41,7 +41,7 @@ public class SiteService {
             countries.forEach(country -> {
                 if (country != null && country.length() > 0 && !country.equals(userFind.userCountry()) && userPrediction != 999) {
                     double temperature = getTemperatureMoy(country);
-                    if (temperature != 999 && userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && Math.abs(userPrediction - userFind.minimumTemperatureDistance()) <= temperature || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && Math.abs(userPrediction + userFind.minimumTemperatureDistance()) >= temperature) {
+                    if (temperature != 999 && userFind.weatherExpectation().equals(WeatherExpectation.COLDER.toString()) && userPrediction - userFind.minimumTemperatureDistance() >= temperature || userFind.weatherExpectation().equals(WeatherExpectation.WARMER.toString()) && userPrediction + userFind.minimumTemperatureDistance() <= temperature) {
                         travels.add(new Country(country, temperature));
                     }
                 }
@@ -54,7 +54,7 @@ public class SiteService {
     private double getTemperatureMoy(String country) {
         Prediction prediction = getTemperature(country);
         if(prediction != null) {
-            return prediction.getTemperature();
+            return prediction.temperatures().stream().filter(Objects::nonNull).mapToDouble(Temperature::temperature).filter(Objects::nonNull).average().orElseThrow();
         }
         return 999;
     }
@@ -68,5 +68,4 @@ public class SiteService {
         }
         return null;
     }
-
 }
